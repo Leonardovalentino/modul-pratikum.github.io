@@ -1,0 +1,236 @@
+---
+title: "Dasar-Dasar Time Series"
+author: "Leonardo Valentino K"
+date: "8/19/2020"
+output: html_document
+---
+# Dasar Time Series  
+## Alur Berpikir
+Dalam menganalisis suatu deret waktu ada 3 langkah yang perlu dilakukan. Yaitu :  
+\linebreak  
+1. Pembuatan/Penentuan Parameter Model (**Model Specification**)  
+2. Pencocokkan Model (**Model Fitting**)  
+3. Diagnosis Model (**Model Diagnostic**)  
+\linebreak
+\noindent  
+Tapi pada sebelum menjalankan 3 langkah diatas, biasanya diperlukan untuk membersihkan atau mengolah data terlebih dahulu. Karena bisa saja ada data yang hilang atau ada tipe data yang tidak sesuai dengan keinginan.     
+\linebreak  
+\noindent
+Untuk mengatasi masalah kehilangan datum/data dapat dilakukan dengan 2 cara. Yang pertama adalah menganggap data itu tidak ada (yang hampir tidak pernah dipakai) dan yang kedua adalah mengisi data tersebut dengan suatu konstanta.  
+\noindent 
+Untuk menentukan konstanta yang akan digunakan ada beberapa cara yang umum/biasa dilakukan seperti berikut ini :  
+\linebreak  
+1. Metode interpolasi  
+2. Metode LOCF (Last Observation Carried Forward) : mengisi data yang hilang dengan data sebelum data yang hilang. *terdapat pada package zoo  
+3. Metode median/mean : biasanya digunakan median karena median tidak terpengaruh jika ada pencilan/outliers.   
+\linebreak  
+\noindent  
+Dalam penentuan Model, dipergunakan prinsip **Parsimoni**. Prinsip parsimoni adalah model yang lebih baik adalah model yang lebih sederhana / memiliki parameter yang lebih sedikit  
+    
+\noindent  
+Sedangkan pada Diagnosis Model kita akan melihat seberapa tepat model kita atau dengan kata lain bagaimana galat yang dihasilkan dari model tersebut.  
+  
+\noindent
+Prediksi dapat dilakukan jika ketiga langkah diatas sudah dilakukan.      
+  
+## Ekspektasi, Kovariansi, dan Korelasi
+**Ekspektasi** ($E[X]$) adalah nilai rataan jangka panjang suatu variabel acak setelah banyak percobaan. Notasi dari Ekspektasi dari suatu variabel acak X adalah $E(X)$.  
+\linebreak  
+**Kovariansi** ($\gamma$) adalah salah satu ukuran untuk melihat persebaran antara satu data dengan data lainnya (antara suatu data X dengan data Y).  
+Diketahui persamaan dari Kovariansi/$\gamma$ adalah = $E[(X-\mu_x)(Y-\mu_y)]$  
+\linebreak
+**Korelasi** ($\rho$) adalah melihat seberapa kuat hubungan linear antara 2 buah variabel acak.  
+\linebreak  
+Sifat-sifat khusus dari Ekspektasi, Kovariansi dan Korelasi dapat dipelajari lebih lanjuta pada buku referensi.   
+  
+## ACF, PACF, dan CCF  
+**ACF** (Auto Correlation Function)  adalah fungsi korelasi antara $Y_t$ dengan $Y_{t-k}$, $\forall k = 1,2,\cdots$   
+\linebreak  
+\noindent
+**PACF** (Partial Auto Correlation Function) adalah  fungsi korelasi antara $Y_t$ dengan $Y_{t-k}$ setelah menghilangkan pengaruh dari $Y_{t-k+1},Y_{t-k+2}, \cdots, Y_{t-1}$, $\forall k = 1,2,\cdots$  
+\linebreak    
+\noindent  
+**CCF** (Cross Correlation Function) adalah fungsi korelasi antara Peubah Acak Y dengan Peubah Acak X   
+\linebreak    
+\noindent  
+Cara membaca plot ACF PACF dan CCF sebenarnya sama, yaitu dengan memperhatikan pada lag keberapa yang melewati batas signifikansi. Jika pada grafik melewati batas signifikansi maka bisa dikatakan bahwa pada lag itu tidak terdapat korelasi (korelasi = 0).  
+    
+\noindent   
+Untuk menghitung batas signifikansi secara manual dengan rumusan berikut Batas Signifikansi $= \pm \frac {z_{1-\alpha}} {\sqrt N}$ dengan z adalah nilai dari distribusi normal, $\alpha =$ tingkat signifikansi dan N adalah banyak data.   
+  
+## Backshift Operator  
+Pada Analisis Deret Waktu ada suatu notasi yang sangat sering dipakai yakni **Backshift Operator**. Perumusannya sangat sederhana yakni sebagai berikut :  $$BY_t = Y_{t-1}$$ Secara sederhana yang merupakan Backshift Operator pada persamaan ini adalah $B$. Dan penulisan model deret waktu akan menggunakan banyak operator ini untuk memudahkan menganalisa dan membuat model.  
+  
+## White Noise  
+**White Noise** adalah model deret waktu yang memiliki sifat seperti berikut :  
+  
+  1. $\mu$(Rataan/Mean) = 0
+  2. $\sigma$(Standar Deviasi) = konstan
+  3. $\rho$(Korelasi) untuk setiap lag = 0
+  
+\noindent  
+White Noise biasa digunakan pada saat **mendiagnosis model** untuk melihat residual dari model yang kita tentukan memiliki ciri yang sama dengan White Noise.      
+```{r Sema Library, message=FALSE, warning=FALSE, include=FALSE}
+library(forecast)
+library(zoo)
+library(tseries)
+```
+
+```{r Contoh Model White Noise, echo=TRUE, message=FALSE, warning=FALSE, fig.align='center',fig.width=7,fig.height=7, fig.cap="Plot Data White Noise dan ACFnya"}
+# Membuat Plot White Noise
+set.seed(160200)
+wn <- arima.sim(model = list(order = c(0, 0, 0)), n = 100)
+par(mfrow= c(2,1))
+plot(wn, main = 'Plot Data White Noise')
+Acf(wn, main = 'Plot ACF dari White Noise')
+```
+  
+\newpage
+## Kestasioneran
+**Kestasioneran** adalah ekspetasi seluruh momen adalah konstan, kestasioneran lemah berarti momen pertama (Rataan) dan momen kedua (Variansi) saja yang konstan. Pada analisa deret waktu biasanya yang kita maksud dengan data stasioner adalah data memiliki **kestasioneran lemah**. Kita bisa mengatakan suatu data deret waktu stasioner adalah ketika :  
+
+  1. $\mu$ (Rataan/Mean) konstan
+  2. $\sigma$ (Standar Deviasi) konstan
+  3. Tidak memiliki pengaruh musiman
+     
+\noindent   
+Biasanya suatu data yang stasioner memiliki ciri seperti **White Noise**.  
+Untuk menentukan suatu data memiliki sifat stasioner secara matematis biasa akan dilihat apakah terdapat akar unit (unit root). **ADF (Augmented Dickey Fuller) test** adalah uji yang dapat digunakan untuk melihat adanya unit root pada suatu time series. Apabila $\alpha<p_{value}$ maka data yang dimiliki sudah stasioner.   
+\noindent  
+Pada bagian ini kita akan melihat suatu data stasioner atau tidak dari grafik. Kita akan melihat apakah data berfluktuasi diantara rataan data tersebut. Jika data tersebut berfluktuasi di sekitar rataannya maka dapat dikatakan bahwa data tersebut stasioner. 
+```{r Contoh Plot yang Stasioner dan Tidak Stasioner, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE,fig.width=5,fig.align='center',fig.height=5, fig.cap= 'Grafik Data untuk Melihat Kestasioneritas'}
+library(zoo)
+library(forecast)
+library(tseries)
+set.seed(1602)
+
+wn <- arima.sim(model =list(order = c(0,0,0)),n =300)
+
+data(gold)
+sum <- ts(gold[1:300])
+sum <- na.fill(sum,median(sum,na.rm=TRUE))
+mean_sum=mean(sum,na.rm=TRUE)
+
+data("co2")
+seasonal <- ts(co2[1:300])
+
+random_walk = arima.sim(model = list(order=c(0,1,0)),n=300)
+
+par(mfrow = c(2,2))
+plot(random_walk, ylab = 'Data', main = 'Data 1, Tidak Stasioner')
+abline(h=mean(random_walk),col='red',lwd=2,lty = 2)
+
+plot(seasonal, ylab = 'Data', main = 'Data 2, Tidak Stasioner')
+abline(h=mean(seasonal),col='red',lwd=2,lty = 2)
+
+plot(sum, ylab = 'Data', main = 'Data 3, Tidak Stasioner')
+abline(h=mean_sum,col='red',lwd=2,lty = 2)
+
+plot(wn, ylab = 'Data', main = 'Data 4, Stasioner')
+abline(h=mean(wn),col='red',lwd=2,lty = 2)
+
+data_1 <- random_walk
+data_2 <- seasonal
+data_3 <- sum
+data_4 <- wn
+```
+\newpage  
+\noindent
+Dapat dilihat pada gambar grafik data 1 dan data 3 tidak memiliki rataan dan variansi yang konstan sehingga sudah jelas bahwa data 1 dan 3 tidak stasioner.  
+\noindent  
+Dapat dilihat pada grafik data 2 memiliki rataan yang terus meningkat sedangkan variansinya konstan dan dapat dilihat juga bahwa data tersebut memiliki pola musiman. Sehingga dapat kita simpulkan bahwa data 2 tidak stasioner juga.  
+\noindent
+Dapat dilihat pada grafik data 4 memiliki rataan dan variansi yang konstan serta tidak terdapat pola musiman yang jelas pada grafik. Sehingga dapat kita katakan bahwa data 4 stasioner.  
+  
+\noindent  
+Karena penilaian dari grafik terlihat ambigu dan subjektif, maka langkah berikutnya kita akan menggunakan ADF Test atau uji ADF. Secara umum kita ambil tingkat signifikansi ($\alpha$) = 5% atau 0.05.   
+  
+```{r ADF Test, echo=TRUE, message=FALSE, warning=FALSE}
+# Input Package tseries ke dalam Library
+library(tseries)
+
+adf.test(data_1) 
+adf.test(data_2)
+adf.test(data_3)
+adf.test(data_4)
+```
+\noindent  
+Dapat dilihat bahwa data 1 dan data 3 memiliki $p_{value}>\alpha$ yang berarti bahwa data tersebut tidak stasioner. Sedangkan pada data 2, $p_{value}<\alpha$ yang berarti data sudah stasioner secara rataan tapi masih memiliki pola musiman sehingga diperlukan pengujian lebih lanjut.  
+\noindent  
+Langkah berikutnya yang dapat kita ambil untuk melihat kestasioneran data dengan melihat grafik ACFnya.
+
+```{r Grafik ACF, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE, fig.width=7, fig.align='center', fig.height=7, fig.cap= 'Grafik ACF untuk Melihat Kestasioneritas'}
+par(mfrow = c(2,2))
+acf(data_1, main = 'Grafik ACF Data 1', lag.max = 36)
+acf(data_2, main = 'Grafik ACF Data 2', lag.max = 36)
+acf(data_3, main = 'Grafik ACF Data 3', lag.max = 36)
+acf(data_4, main = 'Grafik ACF Data 4', lag.max = 36)
+```
+\newpage  
+\noindent  
+Perhatikan bahwa pada lag 0 pada semua data akan sama dengan 1 hal ini lazim karena korelasi antara $Y_t$ dengan $Y_t$ pasti = 1 seperti pada gambar diatas. Maka dari itu untuk grafik ACF ke depannya akan langsung kita dari lag pertama.  
+    
+\noindent  
+Untuk membuat data yang kita miliki menjadi stasioner dapat dilakukan dengan cara mendiferensiasi atau mentransormasi data yang dimiliki. Diferensiasi dilakukan untuk menghilangkan ketaksioneran secara rataan. Diferensiasi musiman digunakan untuk menghilangkan ketaksioneran karena pola musiman. Sedangkan untuk transformasi digunakan ketika dapat diubah dalam bentuk log jika terdapat ketakstasioneran pada standar deviasi tapi perlu diperhatikan bahwa transformasi ke dalam bentuk log dilakukan hanya pada data yang yang nilainya tidak negatif.  
+  
+\noindent
+Adapun diferensiasi biasa (untuk menghilangkan ketakstasioneran pada rataan) dirumuskan secara matematis sebagai berikut :  
+$$\nabla Y_t = Y_t - Y_{t-1}$$  
+Adapun diferensiasi musiman dirumuskan secara matematis sebagai berikut :  
+$$\nabla^s Y_t = Y_t - Y_{t-s}$$  
+  
+## Jenis-Jenis Model Time Series   
+Beberapa model yang akan dibahas pada modul ini yakni :   
+  
+### AR (Auto Regressive) : 
+AR : Memodelkan data yang dipengaruhi oleh galat error pada saat t dan data dari masa lalu. Porsi dari data masa lalu kita notasikan dengan $\phi$ Memiliki notasi dan persamaan matematis seperti berikut :
+$$AR(p) $$
+$$Y_t = \phi_1Y_{t-1} +\phi_2 Y_{t-2}+\cdots+\phi_pY_{t-p} + \epsilon_t$$
+Untuk menentukan model AR perhatikan Grafik PACF
+  
+### MA (Moving Average)   
+MA : Memodelkan data berdasarkan dari galat/error pada saat t dengan galat/error yang sebelumnya. Porsi dari galat kita notasikan dengan $\theta$ Memiliki notasi dan persamaan matematis seperti berikut : 
+$$ MA(q)$$
+$$Y_t =\epsilon_t+\theta_1\epsilon_{t-1}+\theta_2\epsilon_{t-2}+\cdots+\theta_q\epsilon_{t-q}$$
+untuk menentukan model MA perhatikan grafik ACF.  
+  
+### ARMA/ARIMA  (Auto Regressive Moving Average / Auto Regresive Integrated Moving Average)
+ARMA/ARIMA : Merupakan model gabungan dari AR dan MA yang belum/sudah didiferensi. Memiliki notasi dan persamaan matematis seperti berikut :  
+$$ ARIMA(p,d,q)$$
+$$\phi_p(B) (1-B)^d Y_t = \theta_q(B) \epsilon_t$$
+Dengan $\phi_p(B)$ dan $\theta_q(B)$ adalah persamaan karakteristik pada model AR dan MA.  
+Persamaan karakteristiknya adalah sebagai berikut
+$$\phi_p(B) = 1-\phi_1B - \phi_2B^2 - \cdots - \phi_pB^p$$
+$$\theta_q(B) = 1-\theta_1B - \theta_2B^2 - \cdots - \theta_qB^q$$    
+Untuk memodelkan model ARMA/ARIMA, perhatikan grafik ACF, PACF dan apakah data sudah didiferensiasi atau belum. Pada umumnya diferensiasi hanya boleh dilakukan 1 kali saja.   
+  
+### SARIMA (Seasonal ARIMA)  
+SARIMA merupakan model gabungan dari AR dan MA yang belum/sudah didiferensi dan memiliki sifat musiman. Untuk parameter dari model Musiman AR dinotasikan dengan $\Phi$ dan untuk Musiman MA dinotasikan dengan $\Theta$ Memiliki notasi dan persamaan matematis seperti berikut :  
+$$ARIMA(p,d,q)\times(P,D,Q)_s:$$
+$$\phi_p(B)\Phi_P(B^s) (1-B)^d (1-B^s)^DY_t = \theta_q(B)\Theta_Q(B^s) \epsilon_t$$
+Dengan $\Phi_P(B)$ dan $\Theta_Q(B)$ adalah persamaan karakteristik pada model musiman AR dan musiman MA. Dan s adalah periode musimannya.  
+Persamaan karakteristiknya adalah sebagai berikut
+$$\Phi_P(B^s) = 1-\Phi_1B^s - \Phi_2B^{2s} - \cdots - \Phi_PB^{Ps}$$
+$$\Theta_q(B^s) = 1-\Theta_1B^s - \Theta_2B^{2s} - \cdots - \Theta_QB^{Qs}$$   
+Perhatikan grafik ACF dan PACF, dan lag seasonalnya serta perhatikan juga apakah data sudah didiferensiasi secara biasa atau didiferensiasi secara musiman. Untuk jumlah diferensiasi maksimal 2 kali (1 kali didiferensiasi secara biasa dan 1 kali didiferensiasi secara musiman).  
+  
+### ARCH/GARCH (Auto Regressive Conditional Heteroscedasticity/Generalize Auto Regressive Conditional Heteroscedasticity)  
+ARCH/GARCH : Digunakan untuk memodelkan Galat ketika model yang dimiliki tidak stasioner dari standar deviasi. Biasanya kita memilih penaksir tak bias untuk $\sigma^2_{t|t-1}$ dengan $r^2_t$. Dari referensi yang diperoleh, biasanya kita hanya menggunakan model ARCH(1) ataupun GARCH(1,1) dikarenakan untuk menyederhanakan model. Model matematisnya secara umum adalah adalah sebagai berikut : 
+GARCH (p,q)  
+$$r^2_t = \omega + \sum_{i=1}^{max (p,q)}(\alpha_i +\beta_i)r^2_{t-i}+n_t-\sum_{i=1}^p\beta_in_{t-p}$$
+Dengan $n_t$ adalah residual saat t. Biasanya kita menotasikan galat dengan $\epsilon_t$ ketika galat mengikuti sifat White Noise. Jika tidak maka kita notasikan galat dengan notasi yang lain seperti $a_t$.  
+\noindent
+Perlu diperhatikan bahwa GARCH (0,q) = ARCH (q).
+\noindent
+Perhatikan grafik ACF dan PACF dari data dan ACF dan PACF dari residual. Perlu diperhatikan juga bahwa parameter dari model ARCH maupun GARCH memiliki syarat ketaknegatifan.  
+  
+### ADL(Autoregressive Distributed Lag) : 
+ADL(Autoregressive Distributed Lag) : model regresi yang memasukkan nilai variabel prediktor baik nilai masa kini atau nilai masa lalu (lag) dari variabel respons sebagai tambahan pada model yang memasukkan nilai lag dari variabel dependen sebagai salah satu variabel respons. Asumsi yang digunakan ketika membangun model ADL :  
+\linebreak  
+- Variabel $\epsilon_t$ mengikuti proses White Noise, {$\epsilon_t$} $\sim$ i.i.d (independent identic distribution) N(0,$\sigma^2$)   
+- Proses Stokastik{$Y_t$} dan {$X_t$} stasioner   
+- Tidak ada outliers (Pencilan)   
+- Tidak terdapat multikolinearitas pada variabel eksogennya KELARIN (diuji apabila variabel eksogen >1)   
+\linebreak   
+\noindent
+Perhatikan grafik ACF, PACF dan CCF  

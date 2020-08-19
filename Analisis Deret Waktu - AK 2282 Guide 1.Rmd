@@ -1,0 +1,914 @@
+---
+title: "Analisis Deret Waktu - AK 2281"
+author: "Leonardo Valentino Kosasih"
+header-includes:
+    - \usepackage{setspace}\onehalfspacing
+date: "5/30/2020"
+output: 
+  pdf_document: 
+    fig_height: 7
+    fig_width: 7
+    keep_tex: yes
+    number_sections: yes
+    highlight: tango
+---
+\noindent
+\newpage 
+\tableofcontents 
+\listoffigures
+\listoftables
+\newpage
+\abstract{Modul/Buku ini saya tujukan ke teman-teman baik dari ITB ataupun diluar ITB yang ingin belajar mengenai Analisis Deret Waktu maupun yang ingin menambah sudut pandang baru mengenai mata kuliah ini. Secara umum modul/buku ini akan membahas mengenai dasar R, beberapa teori mengenai Analisis Deret Waktu dan cara mengolah Data Deret Waktu. Buku ini menerima banyak sekali bantuan baik dari teman-teman terdekat saya sehingga besar harapan saya jika buku ini dapat dengan mudah dimengerti dan berguna bagi siapapun yang membacanya.}
+\begin{center}
+\includegraphics{Keep The Dream Alive.jpg}
+\end{center}
+\newpage
+# Basic R  
+Pada bagian ini akan dibahas basic mengenai **data science** seperti basic pemrograman, if dan else if, iterasi,  pembuatan dan pengolahan data frame, pembuatan function dan gabungan dari semuanya. 
+
+## Tipe Data  
+Perlu diperhatikan tipe dari data yang dimiliki untuk menghindari kesalahan pengolahan data. Ada beberapa tipe data. Diantaranya adalah :  
+\linebreak    
+\noindent
+1. Character : terdiri dari karakter meskipun terdapat ('Analisis', 'Deret', 'Waktu')  
+2. Numeric : terdiri dari bilangan Real dan Integer   (15.8)  
+3. Integer : terdiri dari bilangan integer   (5L)  
+4. Logical   (TRUE, FALSE)  
+5. Complex   (1 + 4i)  
+6. Factor  : digunakan menyimpan data dengan tipe kategorikal  
+\linebreak  
+\noindent
+Untuk dapat melihat tipe dari suatu data dapat digunakan dapat menggunakan **str(x)**. Dengan x adalah variabel yang ingin dilihat tipenya.  
+
+## Basic Pemrograman  
+Kita mulai dengan penambahan, pengurangan, perkalian, pembagian dan pemangkatan terlebih dahulu. Kemudian kita akan misalkan dengan penggunaan variabel.  
+```{r Basic Pemrograman, echo=TRUE, message=FALSE, warning=FALSE}
+# Penjumlahan, Pengurangan, Perkalian, Pembagian dan Perpangkatan
+15+20 
+2-13
+23/2
+3*4
+6^4
+9^1.5
+
+# Operasi matematika dengan menggunakan variabel
+a <- 7
+b <- 4
+a*b
+c <- a/b # Tidak menampilkan nilai C
+c # Menampilkan nilai
+```
+\noindent
+Perlu diperhatikan bahwa dalam R, jika memisalkan variabel seperti c = a+b hanya menyimpan nilai dari variabel c saja. Jika ingin ditampilkan maka harus dibuat baris khususnya.  
+    
+\noindent
+Terdapat beberapa fungsi modulo, remainder, akar,log, exponential dan ln pada R.  
+```{r Modulo Remainder dan Exponensial, message=FALSE, warning=FALSE, echo=TRUE}
+# Modulo
+7%/%3 
+10%/%5
+# Remainder
+7%%3 
+10%%5
+#Logaritma
+log10(100)
+log(exp(2))  
+# Exponential
+exp(3) 
+```
+\noindent
+Perlu diperhatikan untuk fungsi $log_{10}$ pada R adalah **log10()**. Sedangkan untuk fungsi $log_e$ atau $ln$ adalah **log()**.  
+    
+\noindent
+Pada bagian ini juga akan diperkenalkan cara membuat angka random. Ada yang perlu diperhatikan adalah penggunaan fungsi random akan menghasilkan output yang berbeda setiap kali dijalankan. Untuk itu untuk menyamakan output setiap kali program dijalankan diperlukan suatu fungsi yaitu **set.seed()** pada fungsi ini akan dimasukkan suatu angka tertentu yang dapat ditentukan sendiri (bebas). Hal ini penting untuk melakukan simulasi.    
+```{r Random Number, echo=TRUE, message=FALSE, warning=FALSE}
+set.seed(160200)
+# Mengambil 10 bilangan acak dari vector 20:100 
+random_integer <- sample(20:100, 10, replace = F)
+random_integer
+  
+# Membuat angka random uniform
+random_real <- runif(10, min = -5, max = 5) 
+random_real
+
+# Membuat angka random yang mengikuti distribusi normal dengan mean 6 dan standar deviasi 2
+random_norm <- rnorm(10, mean = 6, sd = 2)  
+random_norm  
+```
+## If dan Else If
+Untuk Logical di R ada beberapa seperti berikut : And/dan (&), Or/Atau (|),dan Negasi(!=). Kita akan mencoba fungsi ini dengan menggunakan persamaan matematika sederhana.  
+```{r If Else, echo=TRUE, message=FALSE, warning=FALSE}
+# Inisiasi Variabel
+a <- 4
+b <- 5
+
+# Contoh Pengunaan If dan Else If 
+if (a<b){
+  c = a
+}else if (a>b){
+  c = b
+}else{
+  c = a + b
+}
+c
+
+# Contoh Pengunaan Dan ( & )
+if(a+b < 4 & b-a > 5){
+  print(a)
+}else{
+  print(b)
+}
+
+# Contoh penggunaan Atau ( | )
+if(a*b > 10 | a/b < 1){
+  print(a)
+}else{
+  print(b)
+}
+
+# Contoh Penggunaan Negasi (!=)
+if(a!=b){
+  print('a tidak sama dengan b')
+}else {
+  print('a sama dengan b')
+}
+```
+\noindent
+Pada dasarnya penggunaan if pada R adalah tanda **()** untuk mengapit kondisi dan tanda **{}** untuk mengapit perintah yang dijalankan.   
+  
+## Iterasi  
+Pada bagian ini kita akan melihat iterasi menggunakan for dan while.  
+```{r Iterasi, echo=TRUE, message=FALSE, warning=FALSE}
+# Contoh menghitung jumlah angka 1 hingga 100
+sum <- 0
+for (i in 1:100) {
+  sum =  sum + i
+}
+sum
+
+# Contoh menghitung jumlah angka kelipatan 3 dari 1 hingga 100 
+j <- 0
+count <- 0
+while (j < 100) {
+  j = j + 1 #Agar memenuhi syarat berhenti
+  if(j%%3 == 0){
+    count = count + 1
+  }
+}
+count  
+```
+\noindent
+Yang perlu diperhatikan pada iterasi **while** adalah agar iterasinya dapat selesai (tidak beriterasi terus dan tidak menghasilkan output).  
+  
+## Fungsi  
+Dalam membuat suatu program, sering kali kita perlu menggunakan set kode yang sama berulang kali. Tentu tidak praktis apabila kita harus mengetikkannya berulang kali, maka dalam programming, dikenal fungsi. Fungsi adalah set perintah yang dapat dipanggil berulang kali dalam kode. Fungsi dapat dibuat untuk memproses input yang kita berikan, bisa digunakan untuk mengembalikan suatu nilai, atau hanya menjalankan suatu perintah saja. Bentuk umum fungsi adalah sebagai berikut  
+```{r Contoh Bentuk Fungsi, message=FALSE, warning=FALSE, eval=FALSE}
+nama_fungsi <- function(parameter){
+  isi fungsi
+}
+```
+    
+\noindent    
+Contoh sederhana adalah membuat fungsi untuk menentukan volume dari sebuah tabung dan barisan Fibonacci.  
+```{r Fungsi Volume Tabung, echo=TRUE, message=FALSE, warning=FALSE}
+# Fungsi Volume Tabung
+vol_tabung <- function(r,h){
+  vol_tabung <- pi*r**2*h
+  return(vol_tabung)
+}
+vol_tabung(7,10)
+```
+```{r Fungsi Fibonacci, echo=TRUE, message=FALSE, warning=FALSE}
+# Fungsi Barisan Fibonacci
+fibonacci <- function(n){
+  barisan <- c(0,1)
+  for(i in 3:n){
+    barisan[i] <- barisan[i-1] + barisan[i-2] 
+  }
+  return(barisan)
+}
+n <- 10
+fibonacci(n)
+fibonacci(10) # Alternatif lain
+```
+
+## Struktur Data
+   
+Struktur data yang umum adalah sebagai berikut :   
+\linebreak
+1. Vector  
+2. List  
+3. Matrix   
+4. Data Frame  
+\linebreak
+\noindent  
+Secara umum perbedaan antara vector dan List adalah List dapat terdiri dari banyak jenis data. Sedangakan vector hanya terdiri atas 1 jenis data saja.    
+Sedankan matrix dan data frame memiliki perbedaan yaitu matrix hanya dapat menampung 1 tipe data sedangkan Data Frame bisa lebih dari 1 tipe data per kolomnya.   
+```{r Contoh Matrix dan Data Frame, echo=TRUE, message=FALSE, warning=FALSE}
+# Membuat Vector dengan Tipe String
+kolom_1 <- c('Telor','Ceplok') 
+
+# Membuat Vector dengan Tipe Numerik
+kolom_2 <- c(0,2) 
+
+#Menggabungkan vector antar baris
+kolom_1_2 <- rbind(kolom_1,kolom_2) 
+kolom_1_2
+kolom_2_1 <- rbind(kolom_2,kolom_1) 
+kolom_2
+
+# Menggabungkan vector antar kolom.
+matriks_1 <- cbind(kolom_1, kolom_2) 
+matriks_1
+matriks_2 <- cbind(kolom_2, kolom_1)
+matriks_2
+
+# Memeriksa struktur data
+str(kolom_1)
+str(kolom_2)
+str(kolom_1_2)
+str(matriks_1)
+```
+\noindent
+Dapat dilihat bahwa pada output str(kolom_1) KELARIN
+\noindent 
+Dapat dilihat bahwa jika kita menggabungkan 2 buah vektor yang berbeda jenis untuk menjadi satu matriks maka tipe datanya akan diubah menjadi tipe yang paling umum (biasanya karakter).  
+\noindent  
+Pada bagian ini akan lebih banyak membahas bagaimana cara memanipulasi data frame tanpa harus menggunakan library.   
+```{r Pembuatan List dan Data Frame, echo=TRUE, message=FALSE, warning=FALSE}
+# Pembuatan List
+belanjaan = c('Buah', 'Susu', 'Telur')
+harga = c(5000,7500,2000)
+
+# Pembuatan Data Frame
+df = data.frame('NamaBelanjaan' = belanjaan, 
+                Harga = harga, 
+                Quantity = 1)
+str(df)
+df
+```
+\noindent
+Untuk pembuatan nama kolom ada baiknya untuk tidak menggunakan spasi karna pada R akan 'mengisi' spasi yang dibuat menjadi . dan akan mempersulit pengolahan data ke depannya.  
+  
+\noindent
+Untuk memilih/mengambil suatu kolom tertentu pada data frame dapat digunakan dengan penomoran kolom dan juga dapat digunakan tanda $. Untuk menggunakan penomoran memiliki format nama_data[baris,kolom]  
+  
+\noindent  
+Katakanlah pada daftar belanjaan tersebut kita mau membuat ada diskonan dan harga diskon.   
+```{r Data Frame Manipulation, message=FALSE, warning=FALSE}
+total = sum(df[3]) # atau bisa dengan sum(df$harga)
+df$persen_diskon = runif(3,min = 0, max = .5)
+df$diskonan = df$Harga*df$persen_diskon
+df$harga_akhir = df$Harga-df$diskonan
+df
+
+#Katakan kita mau mengambil data dari baris ke 2 dan 3 kolom  persen_diskon dan harga_akhir
+df[2:3,c("NamaBelanjaan","persen_diskon","harga_akhir")]
+
+# Jika ingin menghapus kolom ke 2 
+df[2] <- NULL
+df
+```
+\noindent
+Untuk mengambil data-data tertentu maka dapat kita lakukan dengan penggunaan [a,b] dengan a sebagai nomor baris dan b sebagai nomor kolom.    
+\noindent
+Ada beberapa fungsi yang perlu diingat karna sangat membantu untuk memeriksa data. Yakni **head()** (untuk menampilkan 6 observasi teratas) dan **tail()** (untuk menampilkan 6 observasi terbawah)    
+
+## Packages
+  
+Pada R terdapat banyak sekali packages/kumpulan fungsi yang harus diinstal terlebih dahulu. Packages ini dapat dijalankan dengan fungsi **library()**. Tapi yang disoroti pada modul ini adalah packages yang akan digunakan maupun yang akan berguna untuk Analisis Deret Waktu. Perhatikan secara khusus apakah packagesnya sudah di install dan siap untuk diinput ke dalam lembar kerja.
+
+```{r Install dan Input Packages, echo=TRUE, message=FALSE, warning=FALSE}
+# Menginstall Packages
+install.packages("timeSeries")
+# Memasukkan Packages ke dalam Library agar dapat digunakan
+library(timeSeries)
+```
+  
+Berikut adalah list library yang dapat membantu :   
+
+1. Untuk Mengolah Data Time Series :
+    - timeSeries 
+    - TSA
+    - lmtest (untuk melihat trend pada data)
+    - AnalyzeTS
+    - forecast (untuk memprediksi Model)  
+
+2. Untuk Menentukan Model dari Time Series
+    - quantmod (untuk memodelkan data ARCH atau GARCH)
+    - finTS (Untuk memodelkan data ARCH dan GARCH)
+    - dynlm (Untuk memodelkan ADL)
+    - control (untuk Fungsi Transfer)
+
+3. Opsional  :
+    - dplyr (untuk memanipulasi data frame) 
+    - ggplot2
+    - rugarch
+    - TTR
+    - xts
+    - zoo
+  
+\newpage
+# Dasar Time Series  
+## Alur Berpikir
+Dalam menganalisis suatu deret waktu ada 3 langkah yang perlu dilakukan. Yaitu :  
+\linebreak  
+1. Pembuatan/Penentuan Parameter Model (**Model Specification**)  
+2. Pencocokkan Model (**Model Fitting**)  
+3. Diagnosis Model (**Model Diagnostic**)  
+\linebreak
+\noindent  
+Tapi pada sebelum menjalankan 3 langkah diatas, biasanya diperlukan untuk membersihkan atau mengolah data terlebih dahulu. Karena bisa saja ada data yang hilang atau ada tipe data yang tidak sesuai dengan keinginan.     
+\linebreak  
+\noindent
+Untuk mengatasi masalah kehilangan datum/data dapat dilakukan dengan 2 cara. Yang pertama adalah menganggap data itu tidak ada (yang hampir tidak pernah dipakai) dan yang kedua adalah mengisi data tersebut dengan suatu konstanta.  
+\noindent 
+Untuk menentukan konstanta yang akan digunakan ada beberapa cara yang umum/biasa dilakukan seperti berikut ini :  
+\linebreak  
+1. Metode interpolasi  
+2. Metode LOCF (Last Observation Carried Forward) : mengisi data yang hilang dengan data sebelum data yang hilang. *terdapat pada package zoo  
+3. Metode median/mean : biasanya digunakan median karena median tidak terpengaruh jika ada pencilan/outliers.   
+\linebreak  
+\noindent  
+Dalam penentuan Model, dipergunakan prinsip **Parsimoni**. Prinsip parsimoni adalah model yang lebih baik adalah model yang lebih sederhana / memiliki parameter yang lebih sedikit  
+    
+\noindent  
+Sedangkan pada Diagnosis Model kita akan melihat seberapa tepat model kita atau dengan kata lain bagaimana galat yang dihasilkan dari model tersebut.  
+  
+\noindent
+Prediksi dapat dilakukan jika ketiga langkah diatas sudah dilakukan.      
+  
+## Ekspektasi, Kovariansi, dan Korelasi
+**Ekspektasi** ($E[X]$) adalah nilai rataan jangka panjang suatu variabel acak setelah banyak percobaan. Notasi dari Ekspektasi dari suatu variabel acak X adalah $E(X)$.  
+\linebreak  
+**Kovariansi** ($\gamma$) adalah salah satu ukuran untuk melihat persebaran antara satu data dengan data lainnya (antara suatu data X dengan data Y).  
+Diketahui persamaan dari Kovariansi/$\gamma$ adalah = $E[(X-\mu_x)(Y-\mu_y)]$  
+\linebreak
+**Korelasi** ($\rho$) adalah melihat seberapa kuat hubungan linear antara 2 buah variabel acak.  
+\linebreak  
+Sifat-sifat khusus dari Ekspektasi, Kovariansi dan Korelasi dapat dipelajari lebih lanjuta pada buku referensi.   
+  
+## ACF, PACF, dan CCF  
+**ACF** (Auto Correlation Function)  adalah fungsi korelasi antara $Y_t$ dengan $Y_{t-k}$, $\forall k = 1,2,\cdots$   
+\linebreak  
+\noindent
+**PACF** (Partial Auto Correlation Function) adalah  fungsi korelasi antara $Y_t$ dengan $Y_{t-k}$ setelah menghilangkan pengaruh dari $Y_{t-k+1},Y_{t-k+2}, \cdots, Y_{t-1}$, $\forall k = 1,2,\cdots$  
+\linebreak    
+\noindent  
+**CCF** (Cross Correlation Function) adalah fungsi korelasi antara Peubah Acak Y dengan Peubah Acak X   
+\linebreak    
+\noindent  
+Cara membaca plot ACF PACF dan CCF sebenarnya sama, yaitu dengan memperhatikan pada lag keberapa yang melewati batas signifikansi. Jika pada grafik melewati batas signifikansi maka bisa dikatakan bahwa pada lag itu tidak terdapat korelasi (korelasi = 0).  
+    
+\noindent   
+Untuk menghitung batas signifikansi secara manual dengan rumusan berikut Batas Signifikansi $= \pm \frac {z_{1-\alpha}} {\sqrt N}$ dengan z adalah nilai dari distribusi normal, $\alpha =$ tingkat signifikansi dan N adalah banyak data.   
+  
+## Backshift Operator  
+Pada Analisis Deret Waktu ada suatu notasi yang sangat sering dipakai yakni **Backshift Operator**. Perumusannya sangat sederhana yakni sebagai berikut :  $$BY_t = Y_{t-1}$$ Secara sederhana yang merupakan Backshift Operator pada persamaan ini adalah $B$. Dan penulisan model deret waktu akan menggunakan banyak operator ini untuk memudahkan menganalisa dan membuat model.  
+  
+## White Noise  
+**White Noise** adalah model deret waktu yang memiliki sifat seperti berikut :  
+  
+  1. $\mu$(Rataan/Mean) = 0
+  2. $\sigma$(Standar Deviasi) = konstan
+  3. $\rho$(Korelasi) untuk setiap lag = 0
+  
+\noindent  
+White Noise biasa digunakan pada saat **mendiagnosis model** untuk melihat residual dari model yang kita tentukan memiliki ciri yang sama dengan White Noise.      
+```{r Sema Library, message=FALSE, warning=FALSE, include=FALSE}
+library(forecast)
+library(zoo)
+library(tseries)
+```
+
+```{r Contoh Model White Noise, echo=TRUE, message=FALSE, warning=FALSE, fig.align='center',fig.width=7,fig.height=7, fig.cap="Plot Data White Noise dan ACFnya"}
+# Membuat Plot White Noise
+set.seed(160200)
+wn <- arima.sim(model = list(order = c(0, 0, 0)), n = 100)
+par(mfrow= c(2,1))
+plot(wn, main = 'Plot Data White Noise')
+Acf(wn, main = 'Plot ACF dari White Noise')
+```
+  
+\newpage
+## Kestasioneran
+**Kestasioneran** adalah ekspetasi seluruh momen adalah konstan, kestasioneran lemah berarti momen pertama (Rataan) dan momen kedua (Variansi) saja yang konstan. Pada analisa deret waktu biasanya yang kita maksud dengan data stasioner adalah data memiliki **kestasioneran lemah**. Kita bisa mengatakan suatu data deret waktu stasioner adalah ketika :  
+
+  1. $\mu$ (Rataan/Mean) konstan
+  2. $\sigma$ (Standar Deviasi) konstan
+  3. Tidak memiliki pengaruh musiman
+     
+\noindent   
+Biasanya suatu data yang stasioner memiliki ciri seperti **White Noise**.  
+Untuk menentukan suatu data memiliki sifat stasioner secara matematis biasa akan dilihat apakah terdapat akar unit (unit root). **ADF (Augmented Dickey Fuller) test** adalah uji yang dapat digunakan untuk melihat adanya unit root pada suatu time series. Apabila $\alpha<p_{value}$ maka data yang dimiliki sudah stasioner.   
+\noindent  
+Pada bagian ini kita akan melihat suatu data stasioner atau tidak dari grafik. Kita akan melihat apakah data berfluktuasi diantara rataan data tersebut. Jika data tersebut berfluktuasi di sekitar rataannya maka dapat dikatakan bahwa data tersebut stasioner. 
+```{r Contoh Plot yang Stasioner dan Tidak Stasioner, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE,fig.width=5,fig.align='center',fig.height=5, fig.cap= 'Grafik Data untuk Melihat Kestasioneritas'}
+library(zoo)
+library(forecast)
+library(tseries)
+set.seed(1602)
+
+wn <- arima.sim(model =list(order = c(0,0,0)),n =300)
+
+data(gold)
+sum <- ts(gold[1:300])
+sum <- na.fill(sum,median(sum,na.rm=TRUE))
+mean_sum=mean(sum,na.rm=TRUE)
+
+data("co2")
+seasonal <- ts(co2[1:300])
+
+random_walk = arima.sim(model = list(order=c(0,1,0)),n=300)
+
+par(mfrow = c(2,2))
+plot(random_walk, ylab = 'Data', main = 'Data 1, Tidak Stasioner')
+abline(h=mean(random_walk),col='red',lwd=2,lty = 2)
+
+plot(seasonal, ylab = 'Data', main = 'Data 2, Tidak Stasioner')
+abline(h=mean(seasonal),col='red',lwd=2,lty = 2)
+
+plot(sum, ylab = 'Data', main = 'Data 3, Tidak Stasioner')
+abline(h=mean_sum,col='red',lwd=2,lty = 2)
+
+plot(wn, ylab = 'Data', main = 'Data 4, Stasioner')
+abline(h=mean(wn),col='red',lwd=2,lty = 2)
+
+data_1 <- random_walk
+data_2 <- seasonal
+data_3 <- sum
+data_4 <- wn
+```
+\newpage  
+\noindent
+Dapat dilihat pada gambar grafik data 1 dan data 3 tidak memiliki rataan dan variansi yang konstan sehingga sudah jelas bahwa data 1 dan 3 tidak stasioner.  
+\noindent  
+Dapat dilihat pada grafik data 2 memiliki rataan yang terus meningkat sedangkan variansinya konstan dan dapat dilihat juga bahwa data tersebut memiliki pola musiman. Sehingga dapat kita simpulkan bahwa data 2 tidak stasioner juga.  
+\noindent
+Dapat dilihat pada grafik data 4 memiliki rataan dan variansi yang konstan serta tidak terdapat pola musiman yang jelas pada grafik. Sehingga dapat kita katakan bahwa data 4 stasioner.  
+  
+\noindent  
+Karena penilaian dari grafik terlihat ambigu dan subjektif, maka langkah berikutnya kita akan menggunakan ADF Test atau uji ADF. Secara umum kita ambil tingkat signifikansi ($\alpha$) = 5% atau 0.05.   
+  
+```{r ADF Test, echo=TRUE, message=FALSE, warning=FALSE}
+# Input Package tseries ke dalam Library
+library(tseries)
+
+adf.test(data_1) 
+adf.test(data_2)
+adf.test(data_3)
+adf.test(data_4)
+```
+\noindent  
+Dapat dilihat bahwa data 1 dan data 3 memiliki $p_{value}>\alpha$ yang berarti bahwa data tersebut tidak stasioner. Sedangkan pada data 2, $p_{value}<\alpha$ yang berarti data sudah stasioner secara rataan tapi masih memiliki pola musiman sehingga diperlukan pengujian lebih lanjut.  
+\noindent  
+Langkah berikutnya yang dapat kita ambil untuk melihat kestasioneran data dengan melihat grafik ACFnya.
+
+```{r Grafik ACF, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE, fig.width=7, fig.align='center', fig.height=7, fig.cap= 'Grafik ACF untuk Melihat Kestasioneritas'}
+par(mfrow = c(2,2))
+acf(data_1, main = 'Grafik ACF Data 1', lag.max = 36)
+acf(data_2, main = 'Grafik ACF Data 2', lag.max = 36)
+acf(data_3, main = 'Grafik ACF Data 3', lag.max = 36)
+acf(data_4, main = 'Grafik ACF Data 4', lag.max = 36)
+```
+\newpage  
+\noindent  
+Perhatikan bahwa pada lag 0 pada semua data akan sama dengan 1 hal ini lazim karena korelasi antara $Y_t$ dengan $Y_t$ pasti = 1 seperti pada gambar diatas. Maka dari itu untuk grafik ACF ke depannya akan langsung kita dari lag pertama.  
+    
+\noindent  
+Untuk membuat data yang kita miliki menjadi stasioner dapat dilakukan dengan cara mendiferensiasi atau mentransormasi data yang dimiliki. Diferensiasi dilakukan untuk menghilangkan ketaksioneran secara rataan. Diferensiasi musiman digunakan untuk menghilangkan ketaksioneran karena pola musiman. Sedangkan untuk transformasi digunakan ketika dapat diubah dalam bentuk log jika terdapat ketakstasioneran pada standar deviasi tapi perlu diperhatikan bahwa transformasi ke dalam bentuk log dilakukan hanya pada data yang yang nilainya tidak negatif.  
+  
+\noindent
+Adapun diferensiasi biasa (untuk menghilangkan ketakstasioneran pada rataan) dirumuskan secara matematis sebagai berikut :  
+$$\nabla Y_t = Y_t - Y_{t-1}$$  
+Adapun diferensiasi musiman dirumuskan secara matematis sebagai berikut :  
+$$\nabla^s Y_t = Y_t - Y_{t-s}$$  
+  
+## Jenis-Jenis Model Time Series   
+Beberapa model yang akan dibahas pada modul ini yakni :   
+  
+### AR (Auto Regressive) : 
+AR : Memodelkan data yang dipengaruhi oleh galat error pada saat t dan data dari masa lalu. Porsi dari data masa lalu kita notasikan dengan $\phi$ Memiliki notasi dan persamaan matematis seperti berikut :
+$$AR(p) $$
+$$Y_t = \phi_1Y_{t-1} +\phi_2 Y_{t-2}+\cdots+\phi_pY_{t-p} + \epsilon_t$$
+Untuk menentukan model AR perhatikan Grafik PACF
+  
+### MA (Moving Average)   
+MA : Memodelkan data berdasarkan dari galat/error pada saat t dengan galat/error yang sebelumnya. Porsi dari galat kita notasikan dengan $\theta$ Memiliki notasi dan persamaan matematis seperti berikut : 
+$$ MA(q)$$
+$$Y_t =\epsilon_t+\theta_1\epsilon_{t-1}+\theta_2\epsilon_{t-2}+\cdots+\theta_q\epsilon_{t-q}$$
+untuk menentukan model MA perhatikan grafik ACF.  
+  
+### ARMA/ARIMA  (Auto Regressive Moving Average / Auto Regresive Integrated Moving Average)
+ARMA/ARIMA : Merupakan model gabungan dari AR dan MA yang belum/sudah didiferensi. Memiliki notasi dan persamaan matematis seperti berikut :  
+$$ ARIMA(p,d,q)$$
+$$\phi_p(B) (1-B)^d Y_t = \theta_q(B) \epsilon_t$$
+Dengan $\phi_p(B)$ dan $\theta_q(B)$ adalah persamaan karakteristik pada model AR dan MA.  
+Persamaan karakteristiknya adalah sebagai berikut
+$$\phi_p(B) = 1-\phi_1B - \phi_2B^2 - \cdots - \phi_pB^p$$
+$$\theta_q(B) = 1-\theta_1B - \theta_2B^2 - \cdots - \theta_qB^q$$    
+Untuk memodelkan model ARMA/ARIMA, perhatikan grafik ACF, PACF dan apakah data sudah didiferensiasi atau belum. Pada umumnya diferensiasi hanya boleh dilakukan 1 kali saja.   
+  
+### SARIMA (Seasonal ARIMA)  
+SARIMA merupakan model gabungan dari AR dan MA yang belum/sudah didiferensi dan memiliki sifat musiman. Untuk parameter dari model Musiman AR dinotasikan dengan $\Phi$ dan untuk Musiman MA dinotasikan dengan $\Theta$ Memiliki notasi dan persamaan matematis seperti berikut :  
+$$ARIMA(p,d,q)\times(P,D,Q)_s:$$
+$$\phi_p(B)\Phi_P(B^s) (1-B)^d (1-B^s)^DY_t = \theta_q(B)\Theta_Q(B^s) \epsilon_t$$
+Dengan $\Phi_P(B)$ dan $\Theta_Q(B)$ adalah persamaan karakteristik pada model musiman AR dan musiman MA. Dan s adalah periode musimannya.  
+Persamaan karakteristiknya adalah sebagai berikut
+$$\Phi_P(B^s) = 1-\Phi_1B^s - \Phi_2B^{2s} - \cdots - \Phi_PB^{Ps}$$
+$$\Theta_q(B^s) = 1-\Theta_1B^s - \Theta_2B^{2s} - \cdots - \Theta_QB^{Qs}$$   
+Perhatikan grafik ACF dan PACF, dan lag seasonalnya serta perhatikan juga apakah data sudah didiferensiasi secara biasa atau didiferensiasi secara musiman. Untuk jumlah diferensiasi maksimal 2 kali (1 kali didiferensiasi secara biasa dan 1 kali didiferensiasi secara musiman).  
+  
+### ARCH/GARCH (Auto Regressive Conditional Heteroscedasticity/Generalize Auto Regressive Conditional Heteroscedasticity)  
+ARCH/GARCH : Digunakan untuk memodelkan Galat ketika model yang dimiliki tidak stasioner dari standar deviasi. Biasanya kita memilih penaksir tak bias untuk $\sigma^2_{t|t-1}$ dengan $r^2_t$. Dari referensi yang diperoleh, biasanya kita hanya menggunakan model ARCH(1) ataupun GARCH(1,1) dikarenakan untuk menyederhanakan model. Model matematisnya secara umum adalah adalah sebagai berikut : 
+GARCH (p,q)  
+$$r^2_t = \omega + \sum_{i=1}^{max (p,q)}(\alpha_i +\beta_i)r^2_{t-i}+n_t-\sum_{i=1}^p\beta_in_{t-p}$$
+Dengan $n_t$ adalah residual saat t. Biasanya kita menotasikan galat dengan $\epsilon_t$ ketika galat mengikuti sifat White Noise. Jika tidak maka kita notasikan galat dengan notasi yang lain seperti $a_t$.  
+\noindent
+Perlu diperhatikan bahwa GARCH (0,q) = ARCH (q).
+\noindent
+Perhatikan grafik ACF dan PACF dari data dan ACF dan PACF dari residual. Perlu diperhatikan juga bahwa parameter dari model ARCH maupun GARCH memiliki syarat ketaknegatifan.  
+  
+### ADL(Autoregressive Distributed Lag) : 
+ADL(Autoregressive Distributed Lag) : model regresi yang memasukkan nilai variabel prediktor baik nilai masa kini atau nilai masa lalu (lag) dari variabel respons sebagai tambahan pada model yang memasukkan nilai lag dari variabel dependen sebagai salah satu variabel respons. Asumsi yang digunakan ketika membangun model ADL :  
+\linebreak  
+- Variabel $\epsilon_t$ mengikuti proses White Noise, {$\epsilon_t$} $\sim$ i.i.d (independent identic distribution) N(0,$\sigma^2$)   
+- Proses Stokastik{$Y_t$} dan {$X_t$} stasioner   
+- Tidak ada outliers (Pencilan)   
+- Tidak terdapat multikolinearitas pada variabel eksogennya KELARIN (diuji apabila variabel eksogen >1)   
+\linebreak   
+\noindent
+Perhatikan grafik ACF, PACF dan CCF  
+
+\newpage  
+# Pengolahan Di R
+## Prosedur  
+Langkah pertama yang diperlukan adalah mencari dan mempersiapkan data. Data deret waktu yang baik adalah data yang memiliki ukuran setidaknya 50 observasi. Jika kurang dari 50 observasi maka hasil pengolahan data time series dapat menjadi sangat bias.   
+    
+\noindent  
+Langkah berikutnya yang tidak kalah penting adalah untuk memasukkan library yang dirasa diperlukan. Dasarnya hanya dibutuhkan 2 packages yaitu tseries dan forecast. Tapi jika dirasa membutuhkan package lain seperti read_xls, zoo dan dpylr untuk memasukkan atau membersihkan data dapat dimasukkan juga.  
+  
+\noindent
+Ada baiknya juga kita membagi data menjadi 2 bagian dengan rasio (80:20). Fungsinya adalah untuk membagi data yang digunakan untuk membuat model dan untuk menguji model untuk menghindari overfitting. Tolak ukur dari keberhasilan suatu model ada beberapa yakni :  
+   
+1. MSE (Mean Squared Error)   $$MSE = \frac{\sum_{i=1}{\mid e_i\mid}}{n}$$  
+2. MAE (Mean Absolute Error)  $$MAE = \frac{\sum_{i=1}^T(Y_i - \hat Y_i)^2}{T} $$     
+3. MASE (Mean Absoulte Scale Error)  $$MASE = \frac{\frac{1}{J}\sum_J \mid e_j \mid}{\frac{1}{T-1} \sum_{t=2}^T\mid z_t - z_{t-1} \mid} $$      
+4. MAPE(Mean Absolute Error Percentage)  $$ MAPE = \frac{\sum_{i=1}^{T}|z_i - \hat{z}_i| }{T} $$  
+  
+dengan  
+\linebreak  
+- T : Banyak Data  
+- $z_i$ : Data ke - i  
+- $\hat{z}_i$ : Data prediksi ke - i   
+- $e_i$ : Galat/Error ke - i   
+\linebreak   
+Biasanya kita hanya menggunakan MAPE untuk melihat kualitas dari model kita.     
+\par
+  \begin{table}[h!]
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    MAPE &  Keterangan \\  
+    \hline
+    \textless 10\% & Model sangat baik \\  
+    \hline
+    10\%-20\% & Model baik \\   
+    \hline
+    20\%-50\% & Model cukup baik \\ 
+    \hline
+    50\%  & Model buruk \\   
+    \hline
+  \end{tabular}
+  \caption{Tabel MAPE}
+  \label{table:1}
+  \end{table}
+
+## Pengolahan Data untuk Model ARIMA
+### Library untuk ARIMA
+```{r Library ARIMA, echo=TRUE, message=FALSE, warning=FALSE}
+# Untuk membaca data dengan format Excel
+library(readxl) 
+# Untuk mengubah data menjadi Time Series, Acf, Pacf, Model Arima dan ADF Test
+library(tseries)
+# Untuk melihat signifikansi dari Koefesien
+library(lmtest) 
+# Untuk memprediksi data nantinya
+library(forecast)
+# Untuk Plot Data
+library(ggplot2) 
+```
+### Karakteristik Data
+\noindent  
+Pada bagian ini kita akan melihat pengolahan data Total Barang Dalam Negri yang dimuat di Tanjung Priok. Data diperoleh dari bps.go.id pada bulan Juni tanggal 13 tahun 2020. Pertama kita akan melihat datanya terlebih dahulu.
+```{r Sekilas tentang Data, echo=TRUE, fig.align='center', fig.height=7, fig.width=7, message=FALSE, warning=FALSE}
+data <- read_excel("Total Barang Dalam Negeri yang Dimuat di 5 Pelabuhan Utama, 2006-2020 (Ton).xlsx", 
+                   sheet = "Tanjung Priok", col_types = c("date", "numeric"))
+# Statistika Deskriptif
+summary(data) 
+# Mengubah data menjadi bentuk Time Series
+tpriok <- ts(data$`Total Barang (Ton)`) 
+
+# Membuat data train
+tpriok_train <- ts(data$`Total Barang (Ton)`[1:138]) 
+
+# Membuat Grafik Data  
+par(mfrow=c(2,1)) # Membuat plot Data menjadi 1 bagian
+plot(tpriok,lwd = 2, main = 'Plot Data Tanjung Priok')
+abline(h=mean(tpriok),lwd=2,lty = 2, col ='red') # Membuat garis rataan
+Acf(tpriok_train, main ='Grafik ACF Data Train Tanjung Priok', lag.max = 36)
+adf.test(tpriok_train)
+```
+
+\newpage
+### Persiapan Pengolahan Data
+\noindent
+Dapat dilihat dari grafik bahwa data tidak stasioner dalam rataan dan dari ADF test kita memperoleh nilai $p_{value} < \alpha = 0.05$ sehingga dapat dikatakan bahwa data 
+\noindent
+Kemudian akan coba kita diferensiasi sebanyak 2 kali kemudian akan kita lihat grafik data dan ACF data yang sudah didiferensiasi dan juga nilai $p_{value}$ dari ADF test masing-masing  
+```{r Data Diferensiasi 1 Kali, echo=TRUE, fig.align='center', fig.cap='Plot Data dan ACF dari Data Prediksi yang Sudah Didiferensiasikan 1 Kali', fig.height=7, fig.width=7, message=FALSE, warning=FALSE, paged.print=TRUE}
+tpriok_train_diff = diff(tpriok_train)
+par(mfrow=c(2,1))
+plot(tpriok_train_diff,lwd = 2, main = 'Plot Data Train 
+     Tanjung Priok 1 Kali Diferensiasi')
+abline(h=mean(tpriok_train_diff),lwd=2,lty = 2, col ='red')
+
+Acf(tpriok_train_diff, main ='Grafik ACF Data Train Tanjung Priok 1 Kali 
+    Diferensiasi ', lag.max = 36)
+adf.test(tpriok_train_diff)
+```
+```{r Data Diferensiasi 2 Kali, echo=TRUE, fig.align='center', fig.cap='Plot Data dan ACF dari Data Prediksi yang Sudah Didiferensiasikan 2 Kali', fig.height=7, fig.width=7, message=FALSE, warning=FALSE, paged.print=TRUE}
+tpriok_train_diff_2 = diff(tpriok_train_diff)
+par(mfrow=c(2,1))
+plot(tpriok_train_diff_2,lwd = 2, 
+     main = 'Plot Data Train Tanjung Priok 2 Kali Diferensi')
+abline(h=mean(tpriok_train_diff_2),lwd=2,lty = 2, col ='red')
+Acf(tpriok_train_diff_2, main ='ACF Data Train Tanjung Priok 2 Kali 
+    Diferensi', lag.max = 36)
+adf.test(tpriok_train_diff_2)
+```
+\noindent
+Dapat dilihat pada 2 buah data yang sudah didiferensiasi bahwa data tersebut sudah stasioner baik ketika didiferensiasi 1 kali dan 2 kali. Meskipun sudah stasioner pada diferensiasi yang pertama, kita dapat mendiferensiasikan lagi untuk mencari model yang terbaik. 
+\noindent  
+
+### Penentuan Model
+Pada bagian ini kita akan menentukan Model dari data prediksi yang sudah didiferensiasi sebanyak 1 kali dan 2 kali. Pada bagian ini kita akan melihat terlebih dahulu grafik ACF dan PACFnya baru kemudian kita akan menentukan model-model mana saja yang mungkin.  
+```{r Penentuan Model dari ACF dan PACF, echo=TRUE, fig.align='center', fig.cap='Grafik ACF dan PACF untuk Penentuan Model', fig.height=7, fig.width=7, message=FALSE, warning=FALSE, paged.print=TRUE}
+par(mfrow = c(2,2))
+Acf(tpriok_train_diff, main ='ACF Data Train Tanjung Priok 1 Kali 
+    Diferensiasi', lag.max = 36)
+Pacf(tpriok_train_diff, main ='PACF Data Train Tanjung Priok 1 Kali 
+     Diferensiasi', lag.max = 36)
+Acf(tpriok_train_diff_2, main ='ACF Data Train Tanjung Priok 2 Kali 
+    Diferensiasi', lag.max = 36)
+Pacf(tpriok_train_diff_2, main ='PACF Data Train Tanjung Priok 2 Kali 
+     Diferensiasi', lag.max = 36)
+```
+\newpage
+\noindent
+Untuk menentukan model dapat kita lihat pada lag ke berapa masih signifikan (melewati batas signifikansi). Jika sudah pernah melewati maka akan kita abaikan. Perlu diingat juga bahwa kita akan menentukan model berdasarkan prinsip Parsimoni.  
+\noindent
+Dapat dilihat pada grafik ACF dan PACF pada baris pertama, bahwa ACF melewati batas signifikansi pada lag-1 dan PACF melewati batas signifikansi pada lag-3.
+\noindent
+Kemudian dapat kita lihat kembali pada grafik ACF dan PACF pada baris pertama, bahwa ACF melewati batas signifikansi pada lag-8 dan PACF melewati batas signifikansi pada lag-8
+\noindent
+Karena kita menggunakan Prinsip Parsimoni maka dapat kita ambil model yang parameter p dan q untuk model ARIMA nya tidak lebih dari 4. Sehingga dapat kita pilih model yang masih dalam range lag yang dilewati. Tapi untuk pengolahan data kali ini kita akan mencoba menggunakan model ARIMA sebagai berikut :
+  
+1. $ARIMA (3,1,1)$
+2. $ARIMA (0,1,0)$
+3. $ARIMA (0,2,0)$
+4. $ARIMA (3,2,3)$
+  
+\noindent
+Model tidak terbatas dari 4 model ini saja. Tapi lebih dari ini,
+\noindent  
+Untuk penentuan model dapat kita ambil nilai parameter p dan q = 0 jika pada lag pertama ACF/PACFnya nilainya negatif. Karena yang diharapkan nilai korelasinya positif. Tapi jika ingin diambil juga tida ada masalah.  
+\noindent  
+Pada bagian ini kita akan melihat nilai AIC dari model yang kita miliki. Dan akan kita pilih model yang memiliki AIC yang paling rendah.  
+```{r Model berdasarkan AIC, message=FALSE, warning=FALSE}
+mod_1 = arima(tpriok_train,order=c(3,1,1))
+mod_1
+mod_2 = arima(tpriok_train,order=c(0,1,0))
+mod_2
+mod_3 = arima(tpriok_train,order=c(0,2,0))
+mod_3
+mod_4 = arima(tpriok_train,order=c(3,2,3))
+mod_4
+mod_auto = auto.arima(tpriok_train, max.p=4,max.q=4,
+                      seasonal =FALSE, stationary = TRUE)
+mod_auto
+```
+\noindent
+Dapat dilihat bahwa model $ARIMA(3,2,3)$ memiliki nilai AIC yang paling rendah. Tapi karna prinsip parsimoni maka yang akan digunakan adalah model yang paling sederhana yakni $ARIMA(3,1,1)$ Pada bagian ini juga dikenalkan syntax auto.arima yang dapat digunakan untuk menghemat waktu/referensi tapi tidak disarankan untuk langsung digunakan. Tidak ada jaminan bagi model dari auto.arima merupakan model yang terbaik.     
+  
+### Signifikansi dari Koefisien Data dan Pembuatan Model
+```{r Pemeriksaan Koefisien, echo=TRUE, message=FALSE, warning=FALSE}
+coeftest(mod_1) 
+```
+\noindent
+Dapat dilihat bahwa $p_{value}$ dari koefisien ar1, ar2 dan ar3 > $\alpha$ maka dapat kita simpulkan bahwa hanya koefisien ar1 dan ar2 yang tidak siginifikan pada model yang kita miliki. Sehingga model kita hanya memiliki parameter ma 1
+\noindent
+Sehingga kita memiliki model sebagai berikut
+$$\phi_3(B) (1-B)^1 Y_t = \theta_1(B) \epsilon_t$$
+$$(1-\phi_1B-\phi_2B^2-\phi_3B^3)(1-B)Y_t=(1-\theta_1B)\epsilon_t$$
+$$(1-\phi_1B-\phi_2B^2-\phi_3B^3-B+\phi_1B^2+\phi_2B^3+\phi_3B^4)Y_t=(1-\theta_1B)\epsilon_t$$
+$$(1-(1+\phi_1)B-(\phi_2-\phi_1)B^2-(\phi_3-\phi_2)B^3+\phi_3B^4)Y_t = \epsilon_t - \theta_1\epsilon_{t-1}$$
+$$Y_t-(1+\phi_1)Y_{t-1}-(\phi_2-\phi_1)Y_{t-2}-(\phi_3-\phi_2)Y_{t-3}+\phi_3Y_{t-4}=\epsilon_t - \theta_1\epsilon_{t-1}$$
+$$Y_t=(1+\phi_1)Y_{t-1}+(\phi_2-\phi_1)Y_{t-2}+(\phi_3-\phi_2)Y_{t-3}-\phi_3Y_{t-4}+\epsilon_t - \theta_1\epsilon_{t-1}$$
+\noindent
+Karena kita sudah mendapat nilai koefisien dari $\phi_1,\phi_2, \phi_3$ dan $\theta_1$ maka akan kita masukkan ke persamaan yang kita miliki, tapi kita hanya akan memasukkan parameter-parameter yang signifikan saja. Sehingga persamaan kita menjadi  
+$$Y_t=\epsilon_t+0.564618\epsilon_{t-1}$$
+Persamaan ini mirip dengan persamaan $MA(1)$ tapi nilai koefisiennya pasti akan berbeda. Sehingga tidak sama dengan memasukkan model $MA(1)$ langsung.  
+  
+### Diagnostik Model / Model Diagnostic
+Pada bagian ini kita akan melihat residual dari model yang kita buat. 
+```{r Model Diagnostic, echo=TRUE, fig.height=7, fig.width=7,fig.align='center', message=FALSE, warning=FALSE, fig.cap='Model Diagnostik dari Data Prediksi'}
+checkresiduals(mod_1)
+```
+\noindent
+Dapat dilihat pada grafik diatas bahwa residu dari model kita bisa dikatakan stasioner, sedikit berkorelasi dan mengikut distribusi normal. Sehingga dapat dikatakan bahwa residu dari model ini sudah mengikuti white noise.  
+### Pemeriksaan Data pada data Test
+Pada bagian ini akan kita bangun secara manual data sisa 20% yang dijadikan data test. Kita akan mengambil nilai error dari model. Sehingga error saat t=1 adalah 0. Kemduian akan kita cari nilai MAPEnya
+```{r Pengujian Data, echo=TRUE, message=FALSE, warning=FALSE}
+tpriok_pred <- tpriok_train - residuals(mod_1)
+ts.plot(tpriok_pred,tpriok_train, xlab = 'Waktu', ylab = 'Total Barang', 
+        col = c('red', 'blue'), main = 'Perbandingan Antara Data Asli dan dari Model')
+accuracy(mod_1)
+```
+\noindent
+Dapat dilihat bahwa nilai MAPEnya adalah 23% sehingga dapat dikatakan bahwa model kita sangat baik. Berikutnya akan kita lihat hasil prediksi kita dalam bentuk grafik.  
+  
+  
+### Forecast
+Untuk memprediksi data di depan dapat digunakan syntax forecast. Perlu diperhatikan data apa yang akan di prediksi dan modelnya. Jangan sampai menggunakan model dari data asli ataupun menggunakan data untuk membangun model  
+```{r Prediksi, fig.height=7, fig.width=7, message=FALSE, warning=FALSE,fig.align='center',fig.cap='Grafik Prediksi Ke Depannya'}
+fc = forecast(tpriok, model=mod_1,h=1)
+summary(fc)
+plot(fc)
+```
+### Kesimpulan  
+Model dari pengolahan data Total Barang di Pelabuhan Tanjung Priok diperoleh bahwa model yang kita miliki adalah $ARIMA (3,1,1)$ dan memiliki MAPE sebesar $\approx 12\%$ sehingga model ini dapat digunakan untuk memprediksi data ke depannya tapi akan lebih baik jika kita memiliki data yang lebih banyak.      
+\newpage   
+  
+## Pengolahan Data untuk Model SARIMA  
+### Library untuk SARIMA   
+```{r Library SARIMA, echo=TRUE, message=FALSE, warning=FALSE}
+# Untuk membaca data dengan format Excel
+library(readxl) 
+# Untuk mengubah data menjadi Time Series, ACF, PACF, SARIMA dan ADF Test
+library(tseries)
+# Untuk melihat signifikansi dari Koefesien
+library(lmtest) 
+# Untuk memprediksi data nantinya
+library(forecast)
+# Untuk Plot Data
+library(ggplot2) 
+```
+### Karakteristik Data
+\noindent  
+Pada bagian ini kita akan melihat pengolahan data Tingkat Penghunian Kamar Hotel di DKI Jakarta. Guna mengolah data ini adalah untuk merekomendasi kepada Hotel untuk lebih meningkatkan kualitasnya pada layanan hotel ataupun pada pembangunan. Data diperoleh dari bps.go.id pada bulan Juni tanggal 20 tahun 2020. Pertama kita akan melihat datanya terlebih dahulu.
+```{r Sekilas tentang Data Tingkat Hunian, echo=TRUE, fig.align='center', fig.height=7, fig.width=7, message=FALSE, warning=FALSE}
+data <- read_excel("Data/Tingkat Penghunian Kamar Hotel Berbintang di DKI Jakarta.xlsx", 
+                   col_types = c("date", "numeric"))
+summary(data)
+# Mengisi data yang hilang dengan nilai median
+data[is.na(data)] = median(data$`Tingkat Penghunian`,na.rm = TRUE)
+
+# Mengubah data menjadi bentuk Time Series
+tingkat_hunian <- ts(data$`Tingkat Penghunian`) 
+tingkat_hunian_train <- ts(data$`Tingkat Penghunian`[1:119]) 
+par(mfrow=c(2,1)) # Membuat plot Data menjadi 1 bagian
+plot(tingkat_hunian,lwd = 2, main = 'Plot Data Tingkat Hunian Hotel')
+abline(h=mean(tingkat_hunian),lwd=2,lty = 2, col ='red') # Membuat garis rataan
+Acf(tingkat_hunian_train, main ='Grafik ACF Data Train Tingkat Hunian Hotel',
+    lag.max = 60)
+adf.test(tingkat_hunian_train)
+```
+\noindent
+Pada data diperoleh 1 observasi yang hilang. Maka pada bagian ini kita akan mencoba mengisinya dengan nilai median data. Kemudian dapat dilihat pada observasi terakhir data memiliki pencilan. Hal ini bukan disebabkan kesalahan data tapi karena akibat dari Covid-19.
+\noindent
+Pada data juga terlihat bahwa ada pola musiman/seasonal dari grafik ACFnya. Dugaan awal adalah data memiliki pola musiman 4 dan juga 12. Pada bagian ini kita akan mencoba mengambil jika data memiliki pola musiman setiap lag ke 12.
+\newpage  
+  
+### Persiapan Pengolahan Data
+\noindent
+Dapat dilihat dari grafik bahwa data tidak stasioner dalam rataan dibagian akhir data dan diduga memiliki pola musiman. Dari ADF test kita memperoleh nilai $p_{value} < \alpha = 0.05$ sehingga dapat dikatakan bahwa data sudah stasioner.
+\noindent
+Kemudian akan coba kita diferensiasi secara musiman karena data hanya memiliki pola musiman dan kemudian akan kita lihat grafik data dan ACF data yang sudah didiferensiasi secara musiman dan juga nilai $p_{value}$ dari ADF test masing-masing  
+```{r Data Diferensiasi Musiman, echo=TRUE, fig.align='center', fig.cap='Plot Data dan ACF dari Data Prediksi yang Sudah Didiferensiasikan 1 Kali', fig.height=7, fig.width=7, message=FALSE, warning=FALSE, paged.print=TRUE}
+tingkat_hunian_train_diffs = diff(tingkat_hunian_train,lag = 12)
+par(mfrow=c(2,1))
+plot(tingkat_hunian_train_diffs,lwd = 2, 
+     main = 'Plot Data Train Tingkat Hunian Hotel 1 kali Diferensiasi')
+abline(h=mean(tingkat_hunian_train_diffs),lwd=2,lty = 2, col ='red')
+Acf(tingkat_hunian_train_diffs, 
+    main ='Grafik ACF Data Train Tingkat Hunian Hotel 1 kali Diferensiasi', 
+    lag.max = 60)
+adf.test(tingkat_hunian_train_diffs)
+```
+\noindent
+Dapat dilihat bahwa data tidak stasioner dalam rataan setelah didiferensi secara musiman. Namun pada ADF Test, $p_{value} < \alpha$ sehingga dikembalikan kepada pengolah data apakah ingin mendiferensiasikan lagi atau cukup mengolah dengan diferensiasi musiman.
+\noindent  
+**Catatan**  : Urutan untuk diferensi biasa diikuti dengan diferensiasi musiman.
+  
+### Penentuan Model
+Pada bagian ini kita akan menentukan Model dari data prediksi yang sudah didiferensiasi sebanyak 1 kali dan 2 kali. Pada bagian ini kita akan melihat terlebih dahulu grafik ACF dan PACFnya baru kemudian kita akan menentukan model-model mana saja yang mungkin.  
+```{r Penentuan Model SARIMA dari ACF dan PACF, echo=TRUE, fig.align='center', fig.cap='Grafik ACF dan PACF untuk Penentuan Model', fig.height=7, fig.width=7, message=FALSE, warning=FALSE, paged.print=TRUE}
+par(mfrow = c(2,1))
+Acf(tingkat_hunian_train_diffs, 
+    main ='ACF Data Train Tingkat Hunian Hotel 1 Kali Diferensiasi', 
+    lag.max = 36)
+Pacf(tingkat_hunian_train_diffs, 
+     main ='PACF Data Train Tingkat Hunian Hotel 1 Kali Diferensiasi', 
+     lag.max = 36)
+```
+\newpage
+\noindent
+Untuk menentukan model seasonal sama saja dengan menentukan model ARIMA yang biasa. Hanya saja perlu diperhatikan untuk menentukan orde P dan Q sama dengan melihat lag ke-S. Contohnya adalah untuk menentukan orde P = 1 maka yang dilihat adalah grafik PACF pada lag ke 13 jika pola musiman = 12. Begitu juga dengan menentukan orde Q. 
+\noindent
+Dapat dilihat pada grafik ACF dan PACF melewati batas signifikansi pada lag-1 namun pada lag-12 ACF dan PACF melewati batas signifikansi. Dapat kita ambil menjadi menjadi model SARIMA (1,0,1)x(1,1,1) dengan pola musiman 12 
+\noindent
+Pada bagian ini kita akan mencoba mencari kombinasi AIC dan BIC yang paling kecil dari model SARIMA ini. Akan didefinisikan model yang akan dilihat sebagai berikut :  
+  
+1. $SARIMA (1,0,1)\times(1,1,1)_{12}$
+2. $SARIMA (1,0,1)\times(1,1,0)_{12}$
+3. $SARIMA (1,0,1)\times(0,1,1)_{12}$
+4. $SARIMA (1,0,1)\times(0,1,0)_{12}$
+  
+\noindent
+Model tidak terbatas dari 4 model ini saja pengguna dapat menentukan model yang lain.  
+\noindent  
+Pada bagian ini kita akan melihat nilai AIC dari model yang kita miliki. Dan akan kita pilih model yang memiliki AIC yang paling rendah.  
+```{r Model SARIMA berdasarkan AIC, message=FALSE, warning=FALSE}
+mod_1 = arima(tingkat_hunian_train,order=c(1,0,1), 
+              seasonal = list(order=c(1,1,1),period = 12))
+mod_1
+mod_2 = arima(tingkat_hunian_train,order=c(1,0,1), 
+              seasonal = list(order=c(1,1,0),period = 12))
+mod_2
+mod_3 = arima(tingkat_hunian_train,order=c(1,0,1), 
+              seasonal = list(order=c(0,1,1),period = 12))
+mod_3
+mod_4 = arima(tingkat_hunian_train,order=c(1,0,1), 
+              seasonal = list(order=c(0,1,0),period = 12))
+mod_4
+mod_auto = auto.arima(tingkat_hunian_train,seasonal =TRUE, stationary = TRUE)
+mod_auto
+```
+\noindent
+Dapat dilihat bahwa model yang memiliki AIC paling kecil adalah model ke 3 yakni $SARIMA (1,0,1)\times(0,1,1)_{12}$  
+   
+### Signifikansi dari Koefisien Data dan Pembuatan Model
+```{r Pemeriksaan Koefisien SARIMA, echo=TRUE, message=FALSE, warning=FALSE}
+coeftest(mod_3) 
+accuracy(mod_3)
+```
+\noindent
+Dapat dilihat bahwa $p_{value}$ semua koefisien  < $\alpha$ maka dapat kita simpulkan bahwa semua model signifikan.  
+\noindent
+Sehingga kita memiliki model sebagai berikut
+$$\phi_1(B)(1-B^{12}) Y_t = \theta_1(B)\Theta_1(B) \epsilon_t$$
+$$(1-\phi_1B)(1-B^{12})Y_t=(1-\theta_1B)(1-\Theta_1B^{12})\epsilon_t$$
+$$(1-\phi B - B^{12} + \phi B^{13})Y_t = (1 - \theta B - \Theta B^{12} + \theta \Theta B^{13})\epsilon_t$$
+$$Y_t - \phi Y_{t-1} - Y_{t-12} + \phi Y_{t-13} = \epsilon_t - \theta \epsilon_{t-1} - \Theta \epsilon_{t-12} + \theta \Theta \epsilon_{t-13}  $$
+$$Y_t = \phi Y_{t-1} + Y_{t-12} - \phi Y_{t-13} + \epsilon_t - \theta \epsilon_{t-1} - \Theta \epsilon_{t-12} + \theta \Theta \epsilon_{t-13}$$
+$$Y_t =  0.93011 Y_{t-1} + Y_{t-12} -  0.93011 Y_{t-13} + \epsilon_t + 0.70102 \epsilon_{t-1} + 0.49020 \epsilon_{t-12} + 0.34364 \epsilon_{t-13} $$  
+  
+### Diagnostik Model / Model Diagnostic
+Pada bagian ini kita akan melihat residual dari model yang kita buat. 
+```{r Model Diagnostic SARIMA, echo=TRUE, fig.align='center', fig.cap='Model Diagnostik dari Model SARIMA', fig.height=7, fig.width=7, message=FALSE, warning=FALSE}
+checkresiduals(mod_3)
+```
+\noindent
+Dapat dilihat pada grafik diatas bahwa residu dari model kita bisa dikatakan stasioner, Tidak berkorelasi dan mengikut distribusi normal. Sehingga dapat dikatakan bahwa residu dari model ini sudah mengikuti white noise.  
+### Pemeriksaan Data pada data Test
+Pada bagian ini kita akan mengekstrak hasil prediksi yang dilakukan oleh R.  
+```{r Pengujian Model SARIMA, echo=TRUE, message=FALSE, warning=FALSE}
+tingkat_hunian_pred <- tingkat_hunian_train - residuals(mod_3)
+ts.plot(tingkat_hunian_pred,tingkat_hunian_train, xlab = 'Waktu', 
+        ylab = 'Tingkat Hunian', col = c('red', 'blue'), 
+        main = 'Perbandingan Antara Data Asli dan dari Model')
+accuracy(mod_3)
+```
+\noindent
+Dapat dilihat bahwa nilai MAPE dari model yang kita punya sangat baik (< 5%), sehingga tahapan berikutnya adalah memprediksi kedepannya.  
+  
+### Forecast
+Untuk memprediksi data di depan dapat digunakan syntax forecast. Perlu diperhatikan data apa yang akan di prediksi dan modelnya. Jangan sampai menggunakan model dari data asli ataupun menggunakan data untuk membangun model  
+```{r Function Prediksi SARIMA , fig.align='center', fig.cap='Grafik Prediksi Data Tingkat Hunian', fig.height=7, fig.width=7, message=FALSE, warning=FALSE}
+fc = forecast(tingkat_hunian, model=mod_3,h=5)
+summary(fc)
+plot(fc)
+```
+\newpage
+### Kesimpulan
+Model dari data Tingkat Hunian Hotel Berbintang di DKI Jakarta merupakan data yang memiliki pola musiman. Hal ini wajar saja karena naiknya tingkat hunian ini diikuti dengan waktu liburan dan turunnya tingkat hunian saat waktu liburan selesai. Dari pengolahan data diperoleh bahwa model yang kita miliki adalah $SARIMA (1,0,1)\times(0,1,1)$ dan memiliki MAPE sebesar $\approx 3.5\%$ sehingga model ini dapat digunakan untuk memprediksi data ke depannya. 
+
+## Pengolahan Data untuk Model GARCH
+
+## Pengolahan Data untuk Model ADL
+## Fungsi Transfer
+
+# Bibliography
+https://towardsdatascience.com/stationarity-in-time-series-analysis-90c94f27322, Palachy, Shay, 8 April 2019. Diakses pada tanggal 6 Juni 2020
+DataCamp.com

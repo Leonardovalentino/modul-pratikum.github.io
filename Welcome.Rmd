@@ -1,0 +1,5 @@
+---
+title: "Analisis Deret Waktu - AK-2281"
+output: github_document
+---
+# WELCOME !!

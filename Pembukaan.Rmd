@@ -1,0 +1,290 @@
+---
+title: "Pembukaan"
+author: "Leonardo Valentino K"
+date: "8/19/2020"
+output: html_document
+---
+# Basic R  
+Pada bagian ini akan dibahas basic mengenai **data science** seperti basic pemrograman, if dan else if, iterasi,  pembuatan dan pengolahan data frame, pembuatan function dan gabungan dari semuanya. 
+
+## Tipe Data  
+Perlu diperhatikan tipe dari data yang dimiliki untuk menghindari kesalahan pengolahan data. Ada beberapa tipe data. Diantaranya adalah :  
+\linebreak    
+\noindent
+1. Character : terdiri dari karakter meskipun terdapat ('Analisis', 'Deret', 'Waktu')  
+2. Numeric : terdiri dari bilangan Real dan Integer   (15.8)  
+3. Integer : terdiri dari bilangan integer   (5L)  
+4. Logical   (TRUE, FALSE)  
+5. Complex   (1 + 4i)  
+6. Factor  : digunakan menyimpan data dengan tipe kategorikal  
+\linebreak  
+\noindent
+Untuk dapat melihat tipe dari suatu data dapat digunakan dapat menggunakan **str(x)**. Dengan x adalah variabel yang ingin dilihat tipenya.  
+
+## Basic Pemrograman  
+Kita mulai dengan penambahan, pengurangan, perkalian, pembagian dan pemangkatan terlebih dahulu. Kemudian kita akan misalkan dengan penggunaan variabel.  
+```{r Basic Pemrograman, echo=TRUE, message=FALSE, warning=FALSE}
+# Penjumlahan, Pengurangan, Perkalian, Pembagian dan Perpangkatan
+15+20 
+2-13
+23/2
+3*4
+6^4
+9^1.5
+
+# Operasi matematika dengan menggunakan variabel
+a <- 7
+b <- 4
+a*b
+c <- a/b # Tidak menampilkan nilai C
+c # Menampilkan nilai
+```
+\noindent
+Perlu diperhatikan bahwa dalam R, jika memisalkan variabel seperti c = a+b hanya menyimpan nilai dari variabel c saja. Jika ingin ditampilkan maka harus dibuat baris khususnya.  
+    
+\noindent
+Terdapat beberapa fungsi modulo, remainder, akar,log, exponential dan ln pada R.  
+```{r Modulo Remainder dan Exponensial, message=FALSE, warning=FALSE, echo=TRUE}
+# Modulo
+7%/%3 
+10%/%5
+# Remainder
+7%%3 
+10%%5
+#Logaritma
+log10(100)
+log(exp(2))  
+# Exponential
+exp(3) 
+```
+\noindent
+Perlu diperhatikan untuk fungsi $log_{10}$ pada R adalah **log10()**. Sedangkan untuk fungsi $log_e$ atau $ln$ adalah **log()**.  
+    
+\noindent
+Pada bagian ini juga akan diperkenalkan cara membuat angka random. Ada yang perlu diperhatikan adalah penggunaan fungsi random akan menghasilkan output yang berbeda setiap kali dijalankan. Untuk itu untuk menyamakan output setiap kali program dijalankan diperlukan suatu fungsi yaitu **set.seed()** pada fungsi ini akan dimasukkan suatu angka tertentu yang dapat ditentukan sendiri (bebas). Hal ini penting untuk melakukan simulasi.    
+```{r Random Number, echo=TRUE, message=FALSE, warning=FALSE}
+set.seed(160200)
+# Mengambil 10 bilangan acak dari vector 20:100 
+random_integer <- sample(20:100, 10, replace = F)
+random_integer
+  
+# Membuat angka random uniform
+random_real <- runif(10, min = -5, max = 5) 
+random_real
+
+# Membuat angka random yang mengikuti distribusi normal dengan mean 6 dan standar deviasi 2
+random_norm <- rnorm(10, mean = 6, sd = 2)  
+random_norm  
+```
+## If dan Else If
+Untuk Logical di R ada beberapa seperti berikut : And/dan (&), Or/Atau (|),dan Negasi(!=). Kita akan mencoba fungsi ini dengan menggunakan persamaan matematika sederhana.  
+```{r If Else, echo=TRUE, message=FALSE, warning=FALSE}
+# Inisiasi Variabel
+a <- 4
+b <- 5
+
+# Contoh Pengunaan If dan Else If 
+if (a<b){
+  c = a
+}else if (a>b){
+  c = b
+}else{
+  c = a + b
+}
+c
+
+# Contoh Pengunaan Dan ( & )
+if(a+b < 4 & b-a > 5){
+  print(a)
+}else{
+  print(b)
+}
+
+# Contoh penggunaan Atau ( | )
+if(a*b > 10 | a/b < 1){
+  print(a)
+}else{
+  print(b)
+}
+
+# Contoh Penggunaan Negasi (!=)
+if(a!=b){
+  print('a tidak sama dengan b')
+}else {
+  print('a sama dengan b')
+}
+```
+\noindent
+Pada dasarnya penggunaan if pada R adalah tanda **()** untuk mengapit kondisi dan tanda **{}** untuk mengapit perintah yang dijalankan.   
+  
+## Iterasi  
+Pada bagian ini kita akan melihat iterasi menggunakan for dan while.  
+```{r Iterasi, echo=TRUE, message=FALSE, warning=FALSE}
+# Contoh menghitung jumlah angka 1 hingga 100
+sum <- 0
+for (i in 1:100) {
+  sum =  sum + i
+}
+sum
+
+# Contoh menghitung jumlah angka kelipatan 3 dari 1 hingga 100 
+j <- 0
+count <- 0
+while (j < 100) {
+  j = j + 1 #Agar memenuhi syarat berhenti
+  if(j%%3 == 0){
+    count = count + 1
+  }
+}
+count  
+```
+\noindent
+Yang perlu diperhatikan pada iterasi **while** adalah agar iterasinya dapat selesai (tidak beriterasi terus dan tidak menghasilkan output).  
+  
+## Fungsi  
+Dalam membuat suatu program, sering kali kita perlu menggunakan set kode yang sama berulang kali. Tentu tidak praktis apabila kita harus mengetikkannya berulang kali, maka dalam programming, dikenal fungsi. Fungsi adalah set perintah yang dapat dipanggil berulang kali dalam kode. Fungsi dapat dibuat untuk memproses input yang kita berikan, bisa digunakan untuk mengembalikan suatu nilai, atau hanya menjalankan suatu perintah saja. Bentuk umum fungsi adalah sebagai berikut  
+```{r Contoh Bentuk Fungsi, message=FALSE, warning=FALSE, eval=FALSE}
+nama_fungsi <- function(parameter){
+  isi fungsi
+}
+```
+    
+\noindent    
+Contoh sederhana adalah membuat fungsi untuk menentukan volume dari sebuah tabung dan barisan Fibonacci.  
+```{r Fungsi Volume Tabung, echo=TRUE, message=FALSE, warning=FALSE}
+# Fungsi Volume Tabung
+vol_tabung <- function(r,h){
+  vol_tabung <- pi*r**2*h
+  return(vol_tabung)
+}
+vol_tabung(7,10)
+```
+```{r Fungsi Fibonacci, echo=TRUE, message=FALSE, warning=FALSE}
+# Fungsi Barisan Fibonacci
+fibonacci <- function(n){
+  barisan <- c(0,1)
+  for(i in 3:n){
+    barisan[i] <- barisan[i-1] + barisan[i-2] 
+  }
+  return(barisan)
+}
+n <- 10
+fibonacci(n)
+fibonacci(10) # Alternatif lain
+```
+
+## Struktur Data
+   
+Struktur data yang umum adalah sebagai berikut :   
+\linebreak
+1. Vector  
+2. List  
+3. Matrix   
+4. Data Frame  
+\linebreak
+\noindent  
+Secara umum perbedaan antara vector dan List adalah List dapat terdiri dari banyak jenis data. Sedangakan vector hanya terdiri atas 1 jenis data saja.    
+Sedankan matrix dan data frame memiliki perbedaan yaitu matrix hanya dapat menampung 1 tipe data sedangkan Data Frame bisa lebih dari 1 tipe data per kolomnya.   
+```{r Contoh Matrix dan Data Frame, echo=TRUE, message=FALSE, warning=FALSE}
+# Membuat Vector dengan Tipe String
+kolom_1 <- c('Telor','Ceplok') 
+
+# Membuat Vector dengan Tipe Numerik
+kolom_2 <- c(0,2) 
+
+#Menggabungkan vector antar baris
+kolom_1_2 <- rbind(kolom_1,kolom_2) 
+kolom_1_2
+kolom_2_1 <- rbind(kolom_2,kolom_1) 
+kolom_2
+
+# Menggabungkan vector antar kolom.
+matriks_1 <- cbind(kolom_1, kolom_2) 
+matriks_1
+matriks_2 <- cbind(kolom_2, kolom_1)
+matriks_2
+
+# Memeriksa struktur data
+str(kolom_1)
+str(kolom_2)
+str(kolom_1_2)
+str(matriks_1)
+```
+\noindent
+Dapat dilihat bahwa pada output str(kolom_1) KELARIN
+\noindent 
+Dapat dilihat bahwa jika kita menggabungkan 2 buah vektor yang berbeda jenis untuk menjadi satu matriks maka tipe datanya akan diubah menjadi tipe yang paling umum (biasanya karakter).  
+\noindent  
+Pada bagian ini akan lebih banyak membahas bagaimana cara memanipulasi data frame tanpa harus menggunakan library.   
+```{r Pembuatan List dan Data Frame, echo=TRUE, message=FALSE, warning=FALSE}
+# Pembuatan List
+belanjaan = c('Buah', 'Susu', 'Telur')
+harga = c(5000,7500,2000)
+
+# Pembuatan Data Frame
+df = data.frame('NamaBelanjaan' = belanjaan, 
+                Harga = harga, 
+                Quantity = 1)
+str(df)
+df
+```
+\noindent
+Untuk pembuatan nama kolom ada baiknya untuk tidak menggunakan spasi karna pada R akan 'mengisi' spasi yang dibuat menjadi . dan akan mempersulit pengolahan data ke depannya.  
+  
+\noindent
+Untuk memilih/mengambil suatu kolom tertentu pada data frame dapat digunakan dengan penomoran kolom dan juga dapat digunakan tanda $. Untuk menggunakan penomoran memiliki format nama_data[baris,kolom]  
+  
+\noindent  
+Katakanlah pada daftar belanjaan tersebut kita mau membuat ada diskonan dan harga diskon.   
+```{r Data Frame Manipulation, message=FALSE, warning=FALSE}
+total = sum(df[3]) # atau bisa dengan sum(df$harga)
+df$persen_diskon = runif(3,min = 0, max = .5)
+df$diskonan = df$Harga*df$persen_diskon
+df$harga_akhir = df$Harga-df$diskonan
+df
+
+#Katakan kita mau mengambil data dari baris ke 2 dan 3 kolom  persen_diskon dan harga_akhir
+df[2:3,c("NamaBelanjaan","persen_diskon","harga_akhir")]
+
+# Jika ingin menghapus kolom ke 2 
+df[2] <- NULL
+df
+```
+\noindent
+Untuk mengambil data-data tertentu maka dapat kita lakukan dengan penggunaan [a,b] dengan a sebagai nomor baris dan b sebagai nomor kolom.    
+\noindent
+Ada beberapa fungsi yang perlu diingat karna sangat membantu untuk memeriksa data. Yakni **head()** (untuk menampilkan 6 observasi teratas) dan **tail()** (untuk menampilkan 6 observasi terbawah)    
+
+## Packages
+  
+Pada R terdapat banyak sekali packages/kumpulan fungsi yang harus diinstal terlebih dahulu. Packages ini dapat dijalankan dengan fungsi **library()**. Tapi yang disoroti pada modul ini adalah packages yang akan digunakan maupun yang akan berguna untuk Analisis Deret Waktu. Perhatikan secara khusus apakah packagesnya sudah di install dan siap untuk diinput ke dalam lembar kerja.
+
+```{r Install dan Input Packages, echo=TRUE, message=FALSE, warning=FALSE}
+# Menginstall Packages
+install.packages("timeSeries")
+# Memasukkan Packages ke dalam Library agar dapat digunakan
+library(timeSeries)
+```
+  
+Berikut adalah list library yang dapat membantu :   
+
+1. Untuk Mengolah Data Time Series :
+    - timeSeries 
+    - TSA
+    - lmtest (untuk melihat trend pada data)
+    - AnalyzeTS
+    - forecast (untuk memprediksi Model)  
+
+2. Untuk Menentukan Model dari Time Series
+    - quantmod (untuk memodelkan data ARCH atau GARCH)
+    - finTS (Untuk memodelkan data ARCH dan GARCH)
+    - dynlm (Untuk memodelkan ADL)
+    - control (untuk Fungsi Transfer)
+
+3. Opsional  :
+    - dplyr (untuk memanipulasi data frame) 
+    - ggplot2
+    - rugarch
+    - TTR
+    - xts
+    - zoo  
